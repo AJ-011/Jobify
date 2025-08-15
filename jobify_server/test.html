@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Tester</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background-color: #f4f4f4; }
+        h1, h2 { color: #333; }
+        #results { background-color: #fff; border: 1px solid #ddd; padding: 15px; margin-top: 20px; white-space: pre-wrap; font-family: monospace; }
+        textarea { width: 100%; min-height: 150px; }
+        button { background-color: #007bff; color: white; padding: 10px 15px; border: none; cursor: pointer; border-radius: 5px; }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+
+    <h1>Resume Analyzer - Backend Test</h1>
+
+    <form id="test-form">
+        <h2>1. Upload Resume (PDF)</h2>
+        <input type="file" id="resume-file" name="resume" required>
+
+        <h2 style="margin-top: 20px;">2. Paste Job Description</h2>
+        <textarea id="job-description" name="jobDescription" required></textarea>
+
+        <br><br>
+        <button type="submit">Analyze</button>
+    </form>
+
+    <h2>Server Response:</h2>
+    <pre id="results">The JSON response from the server will appear here...</pre>
+
+    <script>
+        const form = document.getElementById('test-form');
+        const resultsDiv = document.getElementById('results');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent the form from submitting the default way
+
+            // Use the FormData object to gather file and text data
+            const formData = new FormData(form);
+
+            resultsDiv.textContent = 'Sending request...';
+
+            try {
+                const response = await fetch('http://localhost:3001/analyze', {
+                    method: 'POST',
+                    body: formData, // No 'Content-Type' header needed; browser sets it for FormData
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    // If the server sent an error, display it
+                    throw new Error(result.error || 'An unknown error occurred.');
+                }
+
+                // Display the successful JSON response, nicely formatted
+                resultsDiv.textContent = JSON.stringify(result, null, 2);
+
+            } catch (error) {
+                resultsDiv.textContent = 'Error: ' + error.message;
+            }
+        });
+    </script>
+
+</body>
+</html>
