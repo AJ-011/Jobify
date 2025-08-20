@@ -189,7 +189,7 @@ const DashboardPage = ({ session }) => {
     const company = formData.get('company') || 'N/A';
 
     try {
-      const response = await fetch('https://jobify-le3t.onrender.com', {
+      const response = await fetch('https://jobify-le3t.onrender.com/analyze', {
         method: 'POST',
         body: formData,
       });

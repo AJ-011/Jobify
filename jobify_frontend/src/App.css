@@ -271,11 +271,20 @@ body {
 .modal-content h2 {
   color: var(--dark-space);
 }
+.btn-primary, .btn-secondary {
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
 .btn-primary {
   background-color: var(--teal-bright);
+  color: var(--white);
 }
 .btn-primary:hover {
   background-color: var(--teal-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
 }
 .btn-secondary {
   background-color: #fff;
@@ -284,19 +293,26 @@ body {
 }
 .btn-secondary:hover {
   background-color: #f9fafb;
+  border-color: #9ca3af;
 }
 
 /* --- Results Modal Styles --- */
+.results-modal {
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  max-height: 800px;
+}
 .results-modal .verdict p {
   color: var(--teal-dark);
 }
 .results-body {
+  flex-grow: 1; /* Allows this to take up available space */
+  overflow-y: auto; /* Enables vertical scrolling */
   background-color: #fff;
   padding: 1.5rem;
   border-radius: 0.5rem;
   margin-top: 1.5rem;
-  max-height: 60vh;
-  overflow-y: auto;
 }
 .ats-section h3, .feedback-section h3 {
   color: var(--dark-space);
@@ -335,9 +351,9 @@ button:focus-visible {
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 50; animation: fadeIn 0.3s ease-out; }
 .modal-content { padding: 2rem; border-radius: 1rem; width: 90%; max-width: 32rem; animation: fadeInUp 0.3s ease-out; }
 .modal-content.large { max-width: 48rem; }
-.modal-actions { margin-top: 2rem; display: flex; justify-content: flex-end; gap: 0.75rem; }
+.modal-actions { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 0.75rem; }
 .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 60; font-size: 1.25rem; font-weight: 600; animation: fadeIn 0.2s; }
-.results-modal .results-header { display: flex; align-items: center; gap: 2rem; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; }
+.results-modal .results-header { display: flex; align-items: center; gap: 2rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; }
 .keyword-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
 .feedback-cards { display: grid; gap: 1rem; }
 .score-gauge { position: relative; width: 120px; height: 120px; flex-shrink: 0; }
