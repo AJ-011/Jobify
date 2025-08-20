@@ -33,6 +33,22 @@ body {
 }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+/* --- Logo --- */
+.jobify-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--dark-space);
+}
+.jobify-logo .logo-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  background-color: var(--teal-bright);
+  border-radius: 9999px;
+}
+
 /* --- Loading Screen --- */
 .loading-screen {
   display: flex;
@@ -75,7 +91,7 @@ body {
   border: 1px solid rgba(255,255,255,0.2);
 }
 .login-card .header h1 {
-  font-size: 2.25rem;
+  font-size: 1.875rem;
   font-weight: 700;
   color: var(--dark-space);
 }
@@ -95,6 +111,12 @@ body {
   background-color: var(--teal-bright);
   transition: background-color 0.2s, transform 0.2s;
   border: none;
+  border-radius: 9999px; /* rounded-full */
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  color: var(--white);
+  width: 100%;
+  cursor: pointer;
 }
 .login-form .submit-btn:hover {
   background-color: var(--teal-dark);
@@ -130,7 +152,6 @@ body {
   color: var(--teal-dark);
 }
 
-/* --- MODIFIED BUTTON STYLES --- */
 .header-actions .new-analysis-btn {
   display: flex;
   align-items: center;
@@ -143,6 +164,8 @@ body {
   box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease-in-out;
   border: none;
+  color: var(--white);
+  cursor: pointer;
 }
 .header-actions .new-analysis-btn:hover {
   background-color: var(--teal-dark);
@@ -159,6 +182,8 @@ body {
   align-items: center;
   justify-content: center;
   border: none;
+  background: none;
+  cursor: pointer;
 }
 .header-actions .logout-btn:hover {
   background-color: var(--light-bg);
@@ -214,6 +239,7 @@ body {
   border: 1px solid transparent;
   transition: all 0.2s ease-in-out;
   text-decoration: none;
+  cursor: pointer;
 }
 .application-item .view-details-btn:hover {
   color: var(--dark-space);
@@ -264,6 +290,8 @@ body {
   padding: 1.5rem;
   border-radius: 0.5rem;
   margin-top: 1.5rem;
+  max-height: 60vh; /* <-- FIX: Added max height */
+  overflow-y: auto; /* <-- FIX: Added overflow scroll */
 }
 .ats-section h3, .feedback-section h3 {
   color: var(--dark-space);
@@ -280,6 +308,9 @@ body {
 button:focus-visible {
   outline: 2px solid var(--teal-bright);
   outline-offset: 2px;
+}
+button {
+  border: none; /* remove default borders */
 }
 
 

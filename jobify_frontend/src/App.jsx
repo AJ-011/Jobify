@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
-import './App.css';
+// Note: App.css is now imported in main.jsx
 
 // --- SVG Icons ---
 const PlusIcon = () => (
@@ -44,6 +44,14 @@ export default function App() {
   );
 }
 
+// --- Reusable Components ---
+const JobifyLogo = () => (
+  <div className="jobify-logo">
+    <span>Jobify</span>
+    <div className="logo-dot"></div>
+  </div>
+);
+
 // --- Page Components ---
 
 const LoadingScreen = () => (
@@ -79,6 +87,9 @@ const AuthPage = () => {
   return (
     <div className="login-page">
       <div className="login-card">
+        <div className="header" style={{marginBottom: '2rem', display: 'flex', justifyContent: 'center'}}>
+          <JobifyLogo />
+        </div>
         <div className="header">
           <h1>{isSignUp ? 'Create Account' : 'Welcome Back'}</h1>
           <p>{isSignUp ? 'Start your journey with Jobify.' : 'Sign in to continue to your dashboard.'}</p>
@@ -108,12 +119,12 @@ const AuthPage = () => {
             {loading ? 'Loading...' : (isSignUp ? 'Sign Up' : 'Sign In')}
           </button>
         </form>
-        <p className="auth-toggle">
+        <div className="auth-toggle">
           {isSignUp ? 'Already have an account?' : "Don't have an account?"}
           <button onClick={() => setIsSignUp(!isSignUp)}>
             {isSignUp ? 'Sign In' : 'Sign Up'}
           </button>
-        </p>
+        </div>
       </div>
     </div>
   );
@@ -173,7 +184,7 @@ const DashboardPage = ({ session }) => {
     const company = formData.get('company') || 'N/A';
 
     try {
-      const response = await fetch('https://jobify-le3t.onrender.com', {
+      const response = await fetch('https://jobify-aj-011.onrender.com/analyze', {
         method: 'POST',
         body: formData,
       });
@@ -184,11 +195,13 @@ const DashboardPage = ({ session }) => {
       }
       
       setAnalysisResult(result);
-      await saveAnalysis(result, jobTitle, company);
+      if (result && !result.error) {
+        await saveAnalysis(result, jobTitle, company);
+      }
 
     } catch (error) {
       console.error("Analysis failed:", error);
-      alert(`Error: ${error.message}`);
+      setAnalysisResult({ error: true });
     } finally {
       setIsAnalyzing(false);
     }
@@ -207,10 +220,7 @@ const DashboardPage = ({ session }) => {
   return (
     <div className="dashboard-page">
       <header className="dashboard-header">
-          <div>
-              <h1>Welcome, {session.user.email}</h1>
-              <p>Here's a summary of your tracked applications.</p>
-          </div>
+          <JobifyLogo />
           <div className="header-actions">
               <button className="new-analysis-btn" onClick={() => setAnalysisModalOpen(true)}>
                   <PlusIcon />
@@ -230,6 +240,7 @@ const DashboardPage = ({ session }) => {
                     <li className="empty-state">Loading applications...</li>
                   ) : applications.length > 0 ? applications.map((app, index) => {
                       const score = app.analysis_result?.matchScore ?? 'N/A';
+                      const date = app.created_at ? new Date(app.created_at).toLocaleDateString() : '---';
                       return (
                         <li
                           key={app.id}
@@ -238,7 +249,7 @@ const DashboardPage = ({ session }) => {
                         >
                             <div>
                                 <p className="job-title">{app.job_title}</p>
-                                <p className="company-info">{app.company} - Analyzed on {new Date(app.created_at).toLocaleDateString()}</p>
+                                <p className="company-info">{app.company} - Analyzed on {date}</p>
                             </div>
                             <div className="details">
                                 <div className="score-container">
@@ -320,12 +331,27 @@ const AnalysisFormModal = ({ onClose, onSubmit }) => {
 };
 
 const ResultsModal = ({ result, onClose }) => {
-  if (!result || !result.atsAnalysis) {
+  // --- FIX: Add useEffect for Escape key ---
+  useEffect(() => {
+    const handleEsc = (event) => {
+      if (event.keyCode === 27) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, [onClose]);
+
+
+  if (!result || result.error || !result.atsAnalysis) {
     return (
        <div className="modal-overlay">
         <div className="modal-content">
           <h2>Analysis Error</h2>
-          <p>The analysis could not be completed. The AI may have returned an unexpected format. Please try again.</p>
+          <p>The analysis could not be completed. The AI may have returned an unexpected format, or the server may be experiencing issues. Please try again.</p>
            <div className="modal-actions">
             <button type="button" onClick={onClose} className="btn-primary">Close</button>
           </div>
@@ -335,8 +361,8 @@ const ResultsModal = ({ result, onClose }) => {
   }
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content large results-modal">
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content large results-modal" onClick={e => e.stopPropagation()}>
         <div className="results-header">
           <ScoreGauge score={result.matchScore} />
           <div className="verdict">
@@ -368,7 +394,7 @@ const ResultsModal = ({ result, onClose }) => {
 
 const ScoreGauge = ({ score = 0 }) => {
   const getScoreColor = (s) => {
-    if (s > 80) return '#22c55e';
+    if (s > 80) return 'var(--teal-bright)';
     if (s > 60) return '#f59e0b';
     return '#ef4444';
   };
